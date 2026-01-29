@@ -45,6 +45,8 @@ jobs:
       - name: Authenticate Firebase
         run: |
             echo '${{ secrets.GCP_SA_KEY }}' > $HOME/firebase-key.json
+            firebase login:ci --service-account firebase-key.json
+
 
       - name: Distribute APK via Firebase
         env:
