@@ -46,11 +46,12 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
           # Save the secret to a temporary file
-              echo '${{ secrets.GCP_SA_KEY }}' > service-account.json
+          echo '${{ secrets.GCP_SA_KEY }}' > service-account.json
 
-              # Point Firebase to that file
-              export GOOGLE_APPLICATION_CREDENTIALS=service-account.json
-
-              firebase appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk \
-                --app ${{ secrets.FIREBASE_APP_ID }} \
-                --groups testers
+          # Point Firebase to that file
+          export GOOGLE_APPLICATION_CREDENTIALS=service-account.json
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk \
+                --app "${{ secrets.FIREBASE_APP_ID }}" \
+                --project "${{ secrets.PROJECT_ID }}" \
+                --groups "testers" \
+                --token "${{ secrets.FIREBASE_TOKEN }}"
