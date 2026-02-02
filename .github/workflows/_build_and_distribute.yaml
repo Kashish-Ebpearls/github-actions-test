@@ -35,11 +35,15 @@ jobs:
           echo '${{ secrets.GCP_SA_KEY }}' > service-account.json
           export GOOGLE_APPLICATION_CREDENTIALS=service-account.json
           
-          # Fetch the latest build version from Firebase
-          # We use jq to parse the JSON output and get the buildVersion of the first item
-          RAW_OUTPUT=$(firebase appdistribution:releases:list --app "${{ secrets.FIREBASE_APP_ID }}" --project "${{ secrets.PROJECT_ID }}" --limit 1 --json)
+          # 1. Capture output. If it fails, echo a dummy empty array string.
+          RAW_OUTPUT=$(firebase appdistribution:releases:list --app "${{ secrets.FIREBASE_APP_ID }}" --project "${{ secrets.PROJECT_ID }}" --limit 1 --json --non-interactive || echo "[]")
           
-          echo '$RAW_OUTPUT'
+          # 2. Safely parse. If it's not a valid list or buildVersion is missing, use 0.
+          LATEST_BUILD=$(echo "$RAW_OUTPUT" | jq -r 'if type=="array" and length > 0 then .[0].buildVersion // 0 else 0 end')
+          
+          # 3. Increment and save to Environment
+          echo "NEW_BUILD_NUMBER=$((LATEST_BUILD + 1))" >> $GITHUB_ENV
+          echo "Using Build Number: $((LATEST_BUILD + 1))"
 
       - name: Build APK
         run: |
