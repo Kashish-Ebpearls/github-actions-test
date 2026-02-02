@@ -37,7 +37,11 @@ jobs:
           
           # Fetch the latest build version from Firebase
           # We use jq to parse the JSON output and get the buildVersion of the first item
-          LATEST_BUILD=$(firebase appdistribution:releases:list --app "${{ secrets.FIREBASE_APP_ID }}" --project "${{ secrets.PROJECT_ID }}" --limit 1 --json | jq '.[0].buildVersion' -r)
+          RAW_OUTPUT=$(firebase appdistribution:releases:list --app "${{ secrets.FIREBASE_APP_ID }}" --project "${{ secrets.PROJECT_ID }}" --limit 1 --json)
+          
+          echo "Raw Output: $RAW_OUTPUT"
+          
+          LATEST_BUILD=$(echo "$RAW_OUTPUT" | jq '.[0].buildVersion' -r)
           
           echo '$LATEST_BUILD'
           
