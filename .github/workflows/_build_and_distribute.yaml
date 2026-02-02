@@ -40,14 +40,14 @@ jobs:
           RAW_OUTPUT=$(firebase appdistribution:releases:list --app "${{ secrets.FIREBASE_APP_ID }}" --project "${{ secrets.PROJECT_ID }}" --limit 1 --json)
           
           echo "Raw Output: $RAW_OUTPUT"
-          
-          LATEST_BUILD=$(echo "$RAW_OUTPUT" | jq '.[0].buildVersion' -r)
-          
-          echo '$LATEST_BUILD'
-          
-          if [ "$LATEST_BUILD" == "null" ] || [ -z "$LATEST_BUILD" ]; then
+          # 2. Check if the output is valid JSON array and not an error
+          if [[ "$RAW_OUTPUT" == "ERROR" ]] || [[ "$RAW_OUTPUT" == "[]" ]] || [[ ! "$RAW_OUTPUT" =~ ^\[ ]]; then
+            echo "No previous releases found or error occurred. Starting at build 1."
             echo "NEW_BUILD_NUMBER=1" >> $GITHUB_ENV
           else
+            # 3. Safely extract the buildVersion
+            LATEST_BUILD=$(echo "$RAW_OUTPUT" | jq -r '.[0].buildVersion')
+            echo "Latest Build Found: $LATEST_BUILD"
             echo "NEW_BUILD_NUMBER=$((LATEST_BUILD + 1))" >> $GITHUB_ENV
           fi
 
