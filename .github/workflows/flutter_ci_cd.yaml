@@ -41,7 +41,7 @@ jobs:
       - name: Upload to Firebase App Distribution
         uses: w9jds/firebase-action@master
         with:
-          args: appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk --app ${{ secrets.FIREBASE_APP_ID }} --groups "internal-testers"
+          args: appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk --app ${{ secrets.FIREBASE_APP_ID }} --project "${{ secrets.FIREBASE_PROJECT_ID }}" --groups "internal-testers"
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
