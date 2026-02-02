@@ -39,25 +39,13 @@ jobs:
           # We use jq to parse the JSON output and get the buildVersion of the first item
           RAW_OUTPUT=$(firebase appdistribution:releases:list --app "${{ secrets.FIREBASE_APP_ID }}" --project "${{ secrets.PROJECT_ID }}" --limit 1 --json)
           
-          echo "Raw Output: $RAW_OUTPUT"
-          # 2. Check if the output is valid JSON array and not an error
-          if [[ "$RAW_OUTPUT" == "ERROR" ]] || [[ "$RAW_OUTPUT" == "[]" ]] || [[ ! "$RAW_OUTPUT" =~ ^\[ ]]; then
-            echo "No previous releases found or error occurred. Starting at build 1."
-            echo "NEW_BUILD_NUMBER=1" >> $GITHUB_ENV
-          else
-            # 3. Safely extract the buildVersion
-            LATEST_BUILD=$(echo "$RAW_OUTPUT" | jq -r '.[0].buildVersion')
-            echo "Latest Build Found: $LATEST_BUILD"
-            echo "NEW_BUILD_NUMBER=$((LATEST_BUILD + 1))" >> $GITHUB_ENV
-          fi
+          echo '$RAW_OUTPUT'
 
       - name: Build APK
         run: |
           flutter build apk \
             --target lib/main-${{ inputs.flavor }}.dart \
-            --debug \
-            --build-number=${{ env.NEW_BUILD_NUMBER }}
-
+            --debug
       - name: Upload to Firebase
         run: |
           export GOOGLE_APPLICATION_CREDENTIALS=service-account.json
