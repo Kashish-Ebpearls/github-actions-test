@@ -8,7 +8,7 @@ jobs:
   # Logic for DEV
   dev-distribute:
     if: github.ref_name == 'dev'
-    uses: ./.github/workflows/_build_and_distribute.yml
+    uses: ./.github/workflows/_build_and_distribute.yaml
     with:
       flavor: dev
     secrets:
