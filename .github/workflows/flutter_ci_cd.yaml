@@ -4,6 +4,8 @@ on:
   push:
     branches: [ dev, stage, uat, main ]
 
+  workflow_dispatch:
+
 jobs:
   # Logic for DEV
   dev-distribute:
@@ -13,6 +15,9 @@ jobs:
       flavor: dev
     secrets:
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
+
 
   # Logic for STAGE
   stage-distribute:
@@ -22,6 +27,8 @@ jobs:
       flavor: stage
     secrets:
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
 
   # Logic for UAT
   uat-distribute:
@@ -31,6 +38,8 @@ jobs:
       flavor: uat
     secrets:
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
 
   # Logic for PRODUCTION
   prod-distribute:
@@ -40,3 +49,5 @@ jobs:
       flavor: prod
     secrets:
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
