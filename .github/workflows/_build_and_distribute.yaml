@@ -39,6 +39,8 @@ jobs:
           # We use jq to parse the JSON output and get the buildVersion of the first item
           LATEST_BUILD=$(firebase appdistribution:releases:list --app "${{ secrets.FIREBASE_APP_ID }}" --project "${{ secrets.PROJECT_ID }}" --limit 1 --json | jq '.[0].buildVersion' -r)
           
+          echo '$LATEST_BUILD'
+          
           if [ "$LATEST_BUILD" == "null" ] || [ -z "$LATEST_BUILD" ]; then
             echo "NEW_BUILD_NUMBER=1" >> $GITHUB_ENV
           else
