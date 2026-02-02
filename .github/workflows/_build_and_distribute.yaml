@@ -29,17 +29,18 @@ jobs:
       - name: install firebase tools
         run:  npm install -g firebase-tools
 
-      - name: export GCP_SA
-        run:
-            echo "$GCP_SA_KEY" > service-account.json
-            export GOOGLE_APPLICATION_CREDENTIALS=service-account.json
-        env:
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-
-
       - name: Upload to Firebase
-        run:
-            firebase appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk 
-            --app ${{secrets.FIREBASE_APP_ID}} 
-            --project ${{secrets.PROJECT_ID}}
-            --groups "qa"
+        run: |
+            # 1. Create the credentials file from the secret
+            echo '${{ secrets.GCP_SA_KEY }}' > service-account.json
+            
+            # 2. Tell the Firebase CLI where the credentials are
+            export GOOGLE_APPLICATION_CREDENTIALS=service-account.json
+            
+            # 3. Run the distribution command
+            firebase appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk \
+              --app "${{ secrets.FIREBASE_APP_ID }}" \
+              --project "${{ secrets.PROJECT_ID }}" \
+              --groups "qa"
+        env:
+            GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
