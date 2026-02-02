@@ -17,7 +17,7 @@ jobs:
   # Logic for STAGE
   stage-distribute:
     if: github.ref_name == 'stage'
-    uses: ./.github/workflows/_build_and_distribute.yml
+    uses: ./.github/workflows/_build_and_distribute.yaml
     with:
       flavor: stage
     secrets:
@@ -26,7 +26,7 @@ jobs:
   # Logic for UAT
   uat-distribute:
     if: github.ref_name == 'uat'
-    uses: ./.github/workflows/_build_and_distribute.yml
+    uses: ./.github/workflows/_build_and_distribute.yaml
     with:
       flavor: uat
     secrets:
@@ -35,7 +35,7 @@ jobs:
   # Logic for PRODUCTION
   prod-distribute:
     if: github.ref_name == 'main'
-    uses: ./.github/workflows/_build_and_distribute.yml
+    uses: ./.github/workflows/_build_and_distribute.yaml
     with:
       flavor: prod
     secrets:
