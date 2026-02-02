@@ -26,14 +26,20 @@ jobs:
       - name: Build APK
         run: flutter build apk --target lib/main-${{inputs.flavor}}.dart --debug
 
-      - name: Upload to Firebase
+      - name: install firebase tools
+        run:  npm install -g firebase-tools
+
+      - name: export GCP_SA
         run:
-            npm install -g firebase-tools
             echo "$GCP_SA_KEY" > service-account.json
             export GOOGLE_APPLICATION_CREDENTIALS=service-account.json
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+
+      - name: Upload to Firebase
+        run:
             firebase appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk 
             --app ${{secrets.FIREBASE_APP_ID}} 
             --project ${{secrets.PROJECT_ID}}
-            --groups "internal-testers"
-        env:
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+            --groups "qa"
