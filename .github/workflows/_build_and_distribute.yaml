@@ -36,7 +36,7 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS=service-account.json
           
           # 1. Capture output. If it fails, echo a dummy empty array string.
-          RAW_OUTPUT=$(firebase appdistribution:releases:list --app "${{ secrets.FIREBASE_APP_ID }}" --project "${{ secrets.PROJECT_ID }}" --limit 1 --json --non-interactive || echo "[]")
+          RAW_OUTPUT=$(firebase appdistribution:releases:list --app "${{ secrets.FIREBASE_APP_ID }}" --project "${{ secrets.PROJECT_ID }}" --limit 1 --json --non-interactive 2>/dev/null || echo "[]")
           
           # 2. Safely parse. If it's not a valid list or buildVersion is missing, use 0.
           LATEST_BUILD=$(echo "$RAW_OUTPUT" | jq -r 'if type=="array" and length > 0 then .[0].buildVersion // 0 else 0 end')
