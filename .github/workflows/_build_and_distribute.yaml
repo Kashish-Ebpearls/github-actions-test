@@ -40,7 +40,7 @@ jobs:
             # 3. Run the distribution command
             firebase appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk \
               --app "${{secrets.FIREBASE_APP_ID}}" \
-              --project $"{{secrets.PROJECT_ID}}" \
+              --project "${{secrets.PROJECT_ID}}" \
               --groups "qa"
         env:
             GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
