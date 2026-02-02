@@ -2,51 +2,41 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [ dev, stage, uat, main ]
 
 jobs:
-  build-android:
-    name: Build Android APK
-    runs-on: ubuntu-latest
+  # Logic for DEV
+  dev-distribute:
+    if: github.ref_name == 'dev'
+    uses: ./.github/workflows/_build_and_distribute.yml
+    with:
+      flavor: dev
+    secrets:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
-    steps:
-      - uses: actions/checkout@v3
+  # Logic for STAGE
+  stage-distribute:
+    if: github.ref_name == 'stage'
+    uses: ./.github/workflows/_build_and_distribute.yml
+    with:
+      flavor: stage
+    secrets:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.38.8'
-          channel: stable
+  # Logic for UAT
+  uat-distribute:
+    if: github.ref_name == 'uat'
+    uses: ./.github/workflows/_build_and_distribute.yml
+    with:
+      flavor: uat
+    secrets:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Analyze code
-        run: flutter analyze
-
-      - name: Run tests
-        run: flutter test
-
-      - name: Build APK
-        run: flutter build apk --debug
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
-
-      - name: Upload to Firebase App Distribution
-        uses: w9jds/firebase-action@master
-        with:
-          args:
-              appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk
-              --app ${{ secrets.FIREBASE_APP_ID }}
-              --project "${{ secrets.PROJECT_ID }}" 
-              --groups "qa"
-        env:
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-
-
+  # Logic for PRODUCTION
+  prod-distribute:
+    if: github.ref_name == 'main'
+    uses: ./.github/workflows/_build_and_distribute.yml
+    with:
+      flavor: prod
+    secrets:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
